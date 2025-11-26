@@ -1,7 +1,7 @@
 import React from 'react';
-import { Truck, CheckCircle, Clock } from 'lucide-react';
+import { Truck, CheckCircle, Clock, Trash2 } from 'lucide-react';
 
-const ShipmentRow = ({ shipment, onUpdateStatus }) => {
+const ShipmentRow = ({ shipment, onUpdateStatus, onDeleteShipment }) => {
   // Get status icon based on current status
   const getStatusIcon = (status) => {
     switch (status) {
@@ -58,6 +58,13 @@ const ShipmentRow = ({ shipment, onUpdateStatus }) => {
     }
   };
 
+  // Handle delete with confirmation
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete shipment ${shipment.trackingNumber}?`)) {
+      onDeleteShipment(shipment.id);
+    }
+  };
+
   return (
     <tr className="hover:bg-gray-50 transition duration-150">
       {/* Tracking Number */}
@@ -96,18 +103,30 @@ const ShipmentRow = ({ shipment, onUpdateStatus }) => {
       
       {/* Actions */}
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        {canAdvanceStatus ? (
+        <div className="flex items-center justify-end gap-2">
+          {canAdvanceStatus ? (
+            <button
+              onClick={() => onUpdateStatus(shipment.id, getNextStatus(shipment.status))}
+              className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-md transition duration-200 text-xs font-medium border border-blue-200 hover:border-blue-300"
+            >
+              Advance to {getNextStatus(shipment.status)}
+            </button>
+          ) : (
+            <span className="text-green-600 text-xs font-medium px-3 py-2 bg-green-50 rounded-md border border-green-200">
+              Complete
+            </span>
+          )}
+          
+          {/* Delete Button */}
           <button
-            onClick={() => onUpdateStatus(shipment.id, getNextStatus(shipment.status))}
-            className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-md transition duration-200 text-xs font-medium border border-blue-200 hover:border-blue-300"
+            onClick={handleDelete}
+            className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-md transition duration-200 text-xs font-medium border border-red-200 hover:border-red-300 flex items-center gap-1"
+            title="Delete shipment"
           >
-            Advance to {getNextStatus(shipment.status)}
+            <Trash2 className="w-3 h-3" />
+            Delete
           </button>
-        ) : (
-          <span className="text-green-600 text-xs font-medium px-3 py-2 bg-green-50 rounded-md border border-green-200">
-            Complete
-          </span>
-        )}
+        </div>
       </td>
     </tr>
   );

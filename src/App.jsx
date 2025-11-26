@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   SignedIn, 
   SignedOut, 
@@ -9,54 +9,119 @@ import {
 import { ShipmentForm, ShipmentTable } from './components';
 import { Package, Clock, Truck, CheckCircle, TrendingUp } from 'lucide-react';
 import Header from './components/layout/Header';
+import { db } from './firebase/config';
+import { 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc, 
+  query, 
+  where, 
+  onSnapshot,
+  serverTimestamp 
+} from 'firebase/firestore';
 
-// Main Dashboard Component (your existing shipment tracker)
+// Main Dashboard Component
 const Dashboard = () => {
   const { user } = useUser();
-  
-  // Your existing shipment state and logic
-  const [shipments, setShipments] = useState([
-    {
-      id: '1',
-      trackingNumber: 'TRK001234567',
-      customerName: 'ABC Electronics Ltd.',
-      productName: 'Laptop Computers (5 units)',
-      shipmentDate: '2024-09-15',
-      status: 'In Transit',
-      createdAt: '2024-09-15T10:00:00Z'
-    },
-    {
-      id: '2',
-      trackingNumber: 'TRK001234568',
-      customerName: 'Global Tech Solutions',
-      productName: 'Mobile Phones (20 units)',
-      shipmentDate: '2024-09-16',
-      status: 'Pending',
-      createdAt: '2024-09-16T14:30:00Z'
-    },
-    {
-      id: '3',
-      trackingNumber: 'TRK001234569',
-      customerName: 'Smart Home Co.',
-      productName: 'Smart Speakers (10 units)',
-      shipmentDate: '2024-09-10',
-      status: 'Delivered',
-      createdAt: '2024-09-10T09:15:00Z'
-    }
-  ]);
+  const [shipments, setShipments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddShipment = (newShipment) => {
-    setShipments(prevShipments => [newShipment, ...prevShipments]);
+  // Real-time listener for shipments
+  useEffect(() => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
+
+    const userEmail = user.primaryEmailAddress.emailAddress;
+    
+    // Create query for user's shipments only
+    const q = query(
+      collection(db, 'shipments'),
+      where('userEmail', '==', userEmail)
+    );
+
+    // Set up real-time listener
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const shipmentsData = [];
+      snapshot.forEach((doc) => {
+        shipmentsData.push({
+          id: doc.id, // ✅ This is the correct Firebase document ID
+          ...doc.data()
+        });
+      });
+      
+      console.log('📦 Loaded shipments:', shipmentsData.map(s => ({ 
+        id: s.id, 
+        tracking: s.trackingNumber 
+      })));
+      
+      // Sort by creation date, newest first
+      shipmentsData.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(0);
+        return dateB - dateA;
+      });
+      
+      setShipments(shipmentsData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching shipments:", error);
+      setLoading(false);
+    });
+
+    // Cleanup listener on unmount
+    return () => unsubscribe();
+  }, [user]);
+
+  const handleAddShipment = async (newShipment) => {
+    try {
+      const userEmail = user.primaryEmailAddress.emailAddress;
+      
+      const docRef = await addDoc(collection(db, 'shipments'), {
+        ...newShipment,
+        userEmail: userEmail,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      
+      console.log('✅ Shipment added successfully with ID:', docRef.id);
+    } catch (error) {
+      console.error('❌ Error adding shipment:', error);
+      alert('Failed to add shipment. Please try again.');
+    }
   };
 
-  const handleUpdateStatus = (shipmentId, newStatus) => {
-    setShipments(prevShipments =>
-      prevShipments.map(shipment =>
-        shipment.id === shipmentId
-          ? { ...shipment, status: newStatus, updatedAt: new Date().toISOString() }
-          : shipment
-      )
-    );
+  const handleUpdateStatus = async (shipmentId, newStatus) => {
+    try {
+      console.log('🔄 Updating status:', { shipmentId, newStatus });
+      
+      const shipmentRef = doc(db, 'shipments', shipmentId);
+      
+      await updateDoc(shipmentRef, {
+        status: newStatus,
+        updatedAt: serverTimestamp()
+      });
+      
+      console.log('✅ Status updated successfully!');
+    } catch (error) {
+      console.error('❌ Error updating status:', error);
+      console.error('Failed shipment ID:', shipmentId);
+      alert('Failed to update status. Please try again.');
+    }
+  };
+
+  const handleDeleteShipment = async (shipmentId) => {
+    try {
+      console.log('🗑️ Deleting shipment:', shipmentId);
+      
+      await deleteDoc(doc(db, 'shipments', shipmentId));
+      
+      console.log('✅ Shipment deleted successfully!');
+    } catch (error) {
+      console.error('❌ Error deleting shipment:', error);
+      console.error('Failed shipment ID:', shipmentId);
+      alert('Failed to delete shipment. Please try again.');
+    }
   };
 
   const getStatusCounts = () => {
@@ -76,6 +141,17 @@ const Dashboard = () => {
 
   const counts = getStatusCounts();
   const completionRate = getCompletionRate();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <Package className="w-16 h-16 text-blue-600 animate-pulse mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Loading your shipments...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -151,7 +227,8 @@ const Dashboard = () => {
         <ShipmentForm onAddShipment={handleAddShipment} />
         <ShipmentTable 
           shipments={shipments} 
-          onUpdateStatus={handleUpdateStatus} 
+          onUpdateStatus={handleUpdateStatus}
+          onDeleteShipment={handleDeleteShipment}
         />
       </div>
     </div>

@@ -15,10 +15,13 @@ const ShipmentForm = ({ onAddShipment }) => {
   const handleSubmit = () => {
     // Validate required fields
     if (formData.trackingNumber && formData.customerName && formData.productName && formData.shipmentDate) {
+      // ✅ FIXED: Don't create id or createdAt manually - let Firebase handle it
       const newShipment = {
-        ...formData,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString()
+        trackingNumber: formData.trackingNumber,
+        customerName: formData.customerName,
+        productName: formData.productName,
+        shipmentDate: formData.shipmentDate,
+        status: formData.status
       };
       
       // Send new shipment to parent component

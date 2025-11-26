@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Package, Search, Filter, ArrowUpDown } from 'lucide-react';
 import ShipmentRow from './ShipmentRow';
 
-const ShipmentTable = ({ shipments, onUpdateStatus }) => {
+const ShipmentTable = ({ shipments, onUpdateStatus, onDeleteShipment }) => {
   // Table state management
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -183,6 +183,7 @@ const ShipmentTable = ({ shipments, onUpdateStatus }) => {
                   key={shipment.id}
                   shipment={shipment}
                   onUpdateStatus={onUpdateStatus}
+                  onDeleteShipment={onDeleteShipment}
                 />
               ))
             ) : (
