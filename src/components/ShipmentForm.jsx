@@ -1,26 +1,80 @@
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Package, ChevronDown, Ruler, Users, Phone } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const ShipmentForm = ({ onAddShipment }) => {
+  const { isDark } = useTheme();
   // Form state management
-  const [formData, setFormData] = useState({
-    trackingNumber: '',
-    customerName: '',
-    productName: '',
+ const [formData, setFormData] = useState({
+    brand: '',
+    category: '',
+    clothingType: '',
+    size: '',
+    age: '',
+    quantity: '',
     shipmentDate: '',
-    status: 'Pending'
+    phoneNumber: '',
+    status: 'Pending Approval'
   });
+
+  // Brand options
+  const brands = [
+    'Zara',
+    'H&M',
+    'Mango',
+    'Next',
+    'Uniqlo',
+    'Gap',
+    'Forever 21',
+    'Massimo Dutti',
+    'Pull & Bear',
+    'Bershka'
+  ];
+
+  // Category options
+  const categories = ['Men', 'Women', 'Children', 'GenZ'];
+
+  // Clothing types by category
+  const clothingTypes = {
+    Men: ['T-Shirt', 'Shirt', 'Jeans', 'Trousers', 'Jacket', 'Blazer'],
+    Women: ['Dress', 'Top', 'Skirt', 'Jeans', 'Blouse', 'Cardigan'],
+    Children: ['T-Shirt', 'Shorts', 'Dress', 'Hoodie', 'Pants', 'Jacket'],
+    GenZ: ['Hoodie', 'Joggers', 'Crop Top', 'Oversized Tee', 'Cargo Pants', 'Bomber Jacket']
+  };
+
+  // Size options by category
+  const sizeOptions = {
+    Men: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+    Women: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    Children: ['2-3Y', '4-5Y', '6-7Y', '8-9Y', '10-11Y', '12-13Y'],
+    GenZ: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+  };
+
+  // Age group options
+  const ageGroups = ['0-5', '6-12', '13-17', '18-25', '26-35', '36-45', '46-55', '56+'];
+
+  // Generate random tracking number
+  const generateTrackingNumber = () => {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    return `TRK-${randomNum}`;
+  };
 
   // Handle form submission
   const handleSubmit = () => {
     // Validate required fields
-    if (formData.trackingNumber && formData.customerName && formData.productName && formData.shipmentDate) {
-      // ✅ FIXED: Don't create id or createdAt manually - let Firebase handle it
-      const newShipment = {
-        trackingNumber: formData.trackingNumber,
-        customerName: formData.customerName,
-        productName: formData.productName,
+     if(formData.brand && formData.category && formData.clothingType && formData.size && formData.age && formData.quantity && formData.shipmentDate && formData.phoneNumber) {
+      const trackingNumber = generateTrackingNumber();
+      
+    const newShipment = {
+        trackingNumber: trackingNumber,
+        brand: formData.brand,
+        category: formData.category,
+        clothingType: formData.clothingType,
+        size: formData.size,
+        age: formData.age,
+        quantity: parseInt(formData.quantity),
         shipmentDate: formData.shipmentDate,
+        phoneNumber: formData.phoneNumber,
         status: formData.status
       };
       
@@ -28,12 +82,16 @@ const ShipmentForm = ({ onAddShipment }) => {
       onAddShipment(newShipment);
       
       // Reset form
-      setFormData({
-        trackingNumber: '',
-        customerName: '',
-        productName: '',
+   setFormData({
+        brand: '',
+        category: '',
+        clothingType: '',
+        size: '',
+        age: '',
+        quantity: '',
         shipmentDate: '',
-        status: 'Pending'
+        phoneNumber: '',
+        status: 'Pending Approval'
       });
     } else {
       alert('Please fill in all required fields!');
@@ -42,10 +100,22 @@ const ShipmentForm = ({ onAddShipment }) => {
 
   // Handle input changes
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    
+    // If category changes, reset clothing type and size
+    if (name === 'category') {
+      setFormData({
+        ...formData,
+        [name]: value,
+        clothingType: '',
+        size: ''
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   // Handle Enter key press
@@ -55,70 +125,138 @@ const ShipmentForm = ({ onAddShipment }) => {
     }
   };
 
+  // Custom Select Component
+  const CustomSelect = ({ label, name, value, options, placeholder, icon, disabled = false }) => (
+    <div className="group">
+      <label className={`block text-sm font-semibold mb-2 flex items-center gap-2 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+        {icon}
+        {label} *
+      </label>
+      <div className="relative">
+        <select
+          name={name}
+          value={value}
+          onChange={handleChange}
+          disabled={disabled}
+          className={`w-full p-4 pr-12 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-300 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? 'bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 hover:border-slate-600' : 'bg-white border border-slate-300 text-slate-800 placeholder-slate-400 hover:border-slate-400'}`}
+          required
+        >
+          <option value="" className={isDark ? 'bg-slate-900 text-slate-500' : 'bg-white text-slate-400'}>{placeholder}</option>
+          {options.map((option) => (
+            <option key={option} value={option} className={isDark ? 'bg-slate-900 text-white py-2' : 'bg-white text-slate-800 py-2'}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="w-5 h-5 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none group-hover:text-emerald-400 transition-colors duration-200" />
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div className={`backdrop-blur-sm rounded-2xl p-8 mb-8 shadow-2xl animate-fade-in-up transition-colors duration-300 ${isDark ? 'bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50' : 'bg-white/80 border border-slate-200'}`} style={{animationDelay: '0.5s'}}>
       {/* Form Header */}
-      <div className="flex items-center mb-4">
-        <Plus className="w-5 h-5 mr-2 text-blue-600" />
-        <h2 className="text-xl font-semibold text-gray-800">Add New Shipment</h2>
+      <div className="flex items-center mb-6">
+        <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl mr-3">
+          <Plus className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Book a Shipment</h2>
+          <p className={`text-sm font-light ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Create a new logistics booking</p>
+        </div>
       </div>
       
       {/* Form Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Tracking Number */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Tracking Number *
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Brand Dropdown */}
+        <CustomSelect
+          label="Brand"
+          name="brand"
+          value={formData.brand}
+          options={brands}
+          placeholder="Select a brand"
+          icon={<Package className="w-4 h-4 text-emerald-400" />}
+        />
+        
+        {/* Category Dropdown */}
+        <CustomSelect
+          label="Category"
+          name="category"
+          value={formData.category}
+          options={categories}
+          placeholder="Select category"
+        />
+        
+        {/* Clothing Type Dropdown - Dynamic based on category */}
+        <CustomSelect
+          label="Clothing Type"
+          name="clothingType"
+          value={formData.clothingType}
+          options={formData.category ? clothingTypes[formData.category] : []}
+          placeholder={formData.category ? 'Select clothing type' : 'Select category first'}
+          disabled={!formData.category}
+        />
+        
+        {/* Size Dropdown - Dynamic based on category */}
+        <CustomSelect
+          label="Size"
+          name="size"
+          value={formData.size}
+          options={formData.category ? sizeOptions[formData.category] : []}
+          placeholder={formData.category ? 'Select size' : 'Select category first'}
+          icon={<Ruler className="w-4 h-4 text-emerald-400" />}
+          disabled={!formData.category}
+        />
+        
+        {/* Age Group Dropdown */}
+        <CustomSelect
+          label="Age Group"
+          name="age"
+          value={formData.age}
+          options={ageGroups}
+          placeholder="Select age group"
+          icon={<Users className="w-4 h-4 text-emerald-400" />}
+        />
+        
+       {/* Quantity Input */}
+        <div className="group">
+          <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+            Quantity *
           </label>
           <input
-            type="text"
-            name="trackingNumber"
-            value={formData.trackingNumber}
+            type="number"
+            name="quantity"
+            value={formData.quantity}
             onChange={handleChange}
             onKeyPress={handleKeyPress}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-            placeholder="TRK123456789"
+            min="1"
+            className={`w-full p-4 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-300 ${isDark ? 'bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 hover:border-slate-600' : 'bg-white border border-slate-300 text-slate-800 placeholder-slate-400 hover:border-slate-400'}`}
+            placeholder="Enter quantity"
             required
           />
         </div>
-        
-        {/* Customer Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Customer Name *
+
+        {/* Phone Number Input */}
+        <div className="group">
+          <label className={`block text-sm font-semibold mb-2 flex items-center gap-2 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+            <Phone className="w-4 h-4 text-emerald-400" />
+            Phone Number *
           </label>
           <input
-            type="text"
-            name="customerName"
-            value={formData.customerName}
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleChange}
             onKeyPress={handleKeyPress}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-            placeholder="John Doe"
-            required
-          />
-        </div>
-        
-        {/* Product Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Product Name *
-          </label>
-          <input
-            type="text"
-            name="productName"
-            value={formData.productName}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-            placeholder="Electronics Package"
+            className={`w-full p-4 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-300 ${isDark ? 'bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 hover:border-slate-600' : 'bg-white border border-slate-300 text-slate-800 placeholder-slate-400 hover:border-slate-400'}`}
+            placeholder="+91 9876543210"
             required
           />
         </div>
         
         {/* Shipment Date */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="group lg:col-span-3">
+          <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
             Shipment Date *
           </label>
           <input
@@ -126,20 +264,20 @@ const ShipmentForm = ({ onAddShipment }) => {
             name="shipmentDate"
             value={formData.shipmentDate}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+            className={`w-full p-4 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-300 ${isDark ? 'bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 hover:border-slate-600' : 'bg-white border border-slate-300 text-slate-800 placeholder-slate-400 hover:border-slate-400'}`}
             required
           />
         </div>
         
         {/* Submit Button */}
-        <div className="md:col-span-2">
+        <div className="lg:col-span-3">
           <button
             type="button"
             onClick={handleSubmit}
-            className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105"
+            className="w-full md:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold py-4 px-8 rounded-xl transition duration-300 flex items-center justify-center shadow-lg hover:shadow-emerald-500/50 transform hover:scale-105 group"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Shipment
+            <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+            Book Shipment
           </button>
         </div>
       </div>
