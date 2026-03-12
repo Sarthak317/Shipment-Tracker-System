@@ -1,12 +1,53 @@
-# React + Vite
+# 🚚 Shipment Tracker App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and responsive **Shipment Management System** built using **React, Firebase Firestore, and Clerk Authentication**.  
+This application enables businesses to efficiently manage shipments with real-time updates, filtering, search, and a professional dashboard UI.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## Expanding the ESLint configuration
+### ✅ Core Functionalities
+- Add new shipments with tracking number, customer details, product info, and shipment date.
+- Update shipment status through workflow:
+  **Pending → In Transit → Delivered**
+- Delete shipments safely with confirmation.
+- Automatic data handling through Firebase Firestore.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+### 🔎 Search, Filter & Sort
+- Search by:
+  - Tracking Number  
+  - Customer Name  
+  - Product Name
+- Filter shipments by **status** (Pending / In Transit / Delivered).
+- Sort shipments by:
+  - Shipment Date  
+  - Customer Name  
+  - Product Name  
+  - Tracking Number
+
+---
+
+### 🔐 Authentication (Clerk)
+- Secure login system using **ClerkProvider**.
+- User profile dropdown (`<UserButton />`).
+- Display logged-in user details in the header.
+
+---
+
+### 🔥 Firebase Firestore Integration
+- Real-time CRUD operations.
+- Firestore auto-generates document IDs.
+- Clean separation of Firebase config.
+
+---
+
+### 🎨 Modern, Responsive UI
+- Styled using **Tailwind CSS**.
+- Beautiful table design with hover effects.
+- Mobile-friendly layout.
+- Form validation for reliable data entry.
+
+
