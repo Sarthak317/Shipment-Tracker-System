@@ -15,17 +15,18 @@ import AdminDashboard from './components/AdminDashboard';
 import { useTheme } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
 import { db } from './firebase/config';
-import { 
-  collection, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  query, 
-  where, 
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
   onSnapshot,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore';
+import { notifyAdminNewShipment } from './utils/notificationService';
 
 // Main Dashboard Component (User)
 const Dashboard = () => {
@@ -83,15 +84,18 @@ const Dashboard = () => {
   const handleAddShipment = async (newShipment) => {
     try {
       const userEmail = user.primaryEmailAddress.emailAddress;
-      
+
       const docRef = await addDoc(collection(db, 'shipments'), {
         ...newShipment,
         userEmail: userEmail,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
-      
+
       console.log('✅ Shipment added successfully with ID:', docRef.id);
+
+      // Notify admin about new shipment
+      await notifyAdminNewShipment(newShipment.trackingNumber, userEmail);
     } catch (error) {
       console.error('❌ Error adding shipment:', error);
       alert('Failed to add shipment. Please try again.');

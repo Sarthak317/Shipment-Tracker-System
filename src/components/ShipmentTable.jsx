@@ -146,90 +146,90 @@ const ShipmentTable = ({ shipments, onUpdateStatus, onDeleteShipment, readOnly =
           {/* Table Header */}
           <thead className={isDark ? 'bg-slate-800/50' : 'bg-slate-50'}>
             <tr>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('trackingNumber')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Tracking
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('trackingNumber')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('brand')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Brand
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('brand')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('category')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Category
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('category')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('clothingType')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Type
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('clothingType')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('size')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Size
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('size')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('age')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Age
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('age')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('quantity')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Qty
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('quantity')}</span>
                 </div>
               </th>
-              <th 
-                className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
+              <th
+                className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider cursor-pointer transition duration-200 group ${isDark ? 'text-slate-300 hover:bg-slate-700/30' : 'text-slate-600 hover:bg-slate-100'}`}
                 onClick={() => handleSort('shipmentDate')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   Date
-                  <ArrowUpDown className={`w-3.5 h-3.5 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <ArrowUpDown className={`w-3 h-3 group-hover:text-emerald-500 transition-colors duration-200 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   <span className="text-emerald-500">{getSortIndicator('shipmentDate')}</span>
                 </div>
               </th>
-              <th className={`px-6 py-4 text-left text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              <th className={`px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                 Status
               </th>
-              <th className={`px-6 py-4 text-right text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              <th className={`px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                 Actions
               </th>
             </tr>

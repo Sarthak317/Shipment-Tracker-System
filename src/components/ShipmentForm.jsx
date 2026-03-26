@@ -59,10 +59,19 @@ const ShipmentForm = ({ onAddShipment }) => {
     return `TRK-${randomNum}`;
   };
 
+  // Phone number regex for Indian numbers (+91 optional, 10 digits starting with 6-9)
+  const phoneRegex = /^(\+91[\-\s]?)?[6-9]\d{9}$/;
+
   // Handle form submission
   const handleSubmit = () => {
     // Validate required fields
      if(formData.brand && formData.category && formData.clothingType && formData.size && formData.age && formData.quantity && formData.shipmentDate && formData.phoneNumber) {
+
+      // Validate phone number format
+      if (!phoneRegex.test(formData.phoneNumber.replace(/\s/g, ''))) {
+        alert('Please enter a valid Indian phone number (10 digits starting with 6-9, +91 optional)');
+        return;
+      }
       const trackingNumber = generateTrackingNumber();
       
     const newShipment = {

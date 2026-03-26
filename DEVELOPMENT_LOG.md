@@ -198,4 +198,174 @@ The following sections were updated:
 
 ---
 
-*Last Updated: February 17, 2026*
+*Last Updated: March 26, 2026*
+
+---
+
+## Session: March 26, 2026
+
+### ✅ Completed Tasks
+
+---
+
+### Task 1: Phone Number Regex Validation
+**Status**: ✅ COMPLETED
+
+**Problem**: Phone number field had no validation, users could enter invalid numbers
+
+**Files Changed**:
+| File | Change |
+|------|--------|
+| `src/components/ShipmentForm.jsx` | Added regex validation for Indian phone numbers |
+
+**Regex Pattern**: `^(\+91[\-\s]?)?[6-9]\d{9}$`
+
+**Valid Formats**:
+- `9876543210`
+- `+919876543210`
+- `+91 9876543210`
+- `+91-9876543210`
+
+**Result**: Phone numbers are now validated before submission
+
+---
+
+### Task 2: Compact Admin Table UI
+**Status**: ✅ COMPLETED
+
+**Problem**: Admin table required horizontal scrolling, looked unprofessional
+
+**Files Changed**:
+| File | Change |
+|------|--------|
+| `src/components/ShipmentRow.jsx` | Reduced padding (`px-6 py-5` → `px-3 py-3`), smaller text, icon-only action buttons with tooltips |
+| `src/components/ShipmentTable.jsx` | Reduced header padding and text size (`text-xs` → `text-[10px]`) |
+
+**Result**:
+- Table fits without horizontal scrolling
+- Action buttons are now icon-only (Approve ✓, Reject ✗, Delete 🗑)
+- Hover tooltips show button purpose
+- Modern, compact design
+
+---
+
+### Task 3: 2-Way Notification System
+**Status**: ✅ COMPLETED
+
+**Problem**: No notification system for admin or users
+
+**New Files Created**:
+| File | Purpose |
+|------|---------|
+| `src/components/NotificationBell.jsx` | Bell icon component with dropdown, badge, history |
+| `src/utils/notificationService.js` | Functions to create notifications in Firestore |
+
+**Files Updated**:
+| File | Change |
+|------|--------|
+| `src/components/layout/Header.jsx` | Added NotificationBell component |
+| `src/App.jsx` | Added `notifyAdminNewShipment()` when user creates shipment |
+| `src/components/AdminDashboard.jsx` | Added `notifyUserStatusChange()` when admin changes status |
+
+**Firestore Collection**: `notifications`
+```javascript
+{
+  id: "auto-generated",
+  type: "new_shipment" | "status_change",
+  recipientType: "admin" | "user",
+  recipientEmail: "user@example.com" | null,
+  trackingNumber: "TRK-123456",
+  message: "Your shipment TRK-123456 has been approved!",
+  status: "Approved",
+  read: false,
+  createdAt: Timestamp
+}
+```
+
+**Firestore Rules Required**:
+```javascript
+match /notifications/{notificationId} {
+  allow read, write, update, delete: if true;
+}
+```
+
+**Features**:
+- Bell icon with red unread count badge (pulses)
+- Dropdown with notification list
+- Unread notifications highlighted
+- "Mark all read" button
+- "Clear all notifications" button
+- Delete individual notifications (X button)
+- Time ago display (Just now, 5m ago, 2h ago, etc.)
+
+**Notification Triggers**:
+| Event | Recipient | Message |
+|-------|-----------|---------|
+| User creates shipment | Admin | "New shipment TRK-XXX from user@email awaiting approval" |
+| Admin approves | User | "Your shipment TRK-XXX has been approved!" |
+| Admin rejects | User | "Your shipment TRK-XXX has been rejected." |
+| Status → In Transit | User | "Your shipment TRK-XXX is now in transit." |
+| Status → Delivered | User | "Your shipment TRK-XXX has been delivered!" |
+
+---
+
+### Task 4: Firebase Composite Index Setup
+**Status**: ✅ COMPLETED
+
+**Problem**: Notifications weren't showing - Firebase threw "query requires an index" error
+
+**Solution**:
+Created composite indexes in Firebase Console → Firestore → Indexes:
+
+| Index | Fields | Status |
+|-------|--------|--------|
+| Admin Notifications | `recipientType` (Asc) + `createdAt` (Desc) | ✅ Enabled |
+| User Notifications | `recipientType` (Asc) + `recipientEmail` (Asc) + `createdAt` (Desc) | ⏳ Create when needed |
+
+**Why needed**: Firestore requires composite indexes for queries with multiple `where` clauses or `where` + `orderBy` on different fields.
+
+**Result**: Admin notifications now work. User notifications index should be created when first user logs in (click the console error link).
+
+---
+
+## 📚 VIVA DOCUMENTATION REMINDER
+
+**⚠️ IMPORTANT FOR ANY AI ASSISTANT READING THIS:**
+
+At the end of this project, create a comprehensive `VIVA_DOCUMENTATION.md` file that includes:
+
+1. **Complete Tech Stack** - Every technology with version, purpose, and WHY it was chosen over alternatives
+2. **Architecture Overview** - Component hierarchy, data flow diagrams (text-based)
+3. **React Concepts Used** - Components, props, state, hooks (useState, useEffect, useContext), context API
+4. **Firebase/Firestore** - NoSQL database concepts, collections, documents, queries, real-time listeners, security rules
+5. **Clerk Authentication** - OAuth flow, session management, protected routes
+6. **Tailwind CSS** - Utility-first approach, responsive design, dark mode implementation
+7. **Key Code Walkthroughs** - Line-by-line explanation of important functions
+8. **Feature Implementation** - How each feature works end-to-end (notification system, status workflow, etc.)
+9. **30-50 Viva Questions & Answers** - Common questions an examiner might ask
+
+**The user is learning backend development - explanations should be beginner-friendly!**
+
+---
+
+## Pending Tasks (Next Session)
+
+### Priority 3: Email Notifications
+- [ ] Set up Firebase Cloud Functions or Node.js backend
+- [ ] Integrate email service (SendGrid/Resend)
+- [ ] Create email templates
+- [ ] Trigger emails on: Approval, Rejection, Status Change, Delivery
+
+### Priority 4: Automatic Status Progression
+- [ ] Calculate delivery phases from approval date
+- [ ] Implement scheduled function to update statuses
+- [ ] 50% time: Approved → In Transit
+- [ ] 50% time: In Transit → Delivered
+
+### Priority 5: Delivery Confirmation with OTP
+- [ ] Integrate SMS service (Twilio/MSG91)
+- [ ] Generate OTP on delivery
+- [ ] Build OTP verification UI
+- [ ] Generate invoice PDF
+
+---

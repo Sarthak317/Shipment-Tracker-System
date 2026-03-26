@@ -4,6 +4,7 @@ import { UserButton, useUser } from '@clerk/clerk-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
+import NotificationBell from '../NotificationBell';
 
 const Header = ({ isAdmin: isAdminProp = false }) => {
   const { user } = useUser();
@@ -55,8 +56,14 @@ const Header = ({ isAdmin: isAdminProp = false }) => {
             </div>
           </div>
 
-          {/* Right side - Theme Toggle and User Menu */}
+          {/* Right side - Notifications, Theme Toggle and User Menu */}
           <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <NotificationBell
+              userEmail={isAdminMode ? null : user?.primaryEmailAddress?.emailAddress}
+              isAdmin={isAdminMode}
+            />
+
             {/* Theme Toggle Button */}
             <ThemeToggle />
             

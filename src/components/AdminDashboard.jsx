@@ -5,8 +5,8 @@ import ShipmentTable from './ShipmentTable';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase/config';
-import { 
-  collection, 
+import {
+  collection,
   onSnapshot,
   query,
   orderBy,
@@ -15,6 +15,7 @@ import {
   deleteDoc,
   serverTimestamp
 } from 'firebase/firestore';
+import { notifyUserStatusChange } from '../utils/notificationService';
 
 const AdminDashboard = () => {
   const { isDark } = useTheme();
@@ -56,12 +57,20 @@ const AdminDashboard = () => {
   // Admin can update shipment status
   const handleUpdateStatus = async (shipmentId, newStatus) => {
     try {
+      // Find the shipment to get userEmail and trackingNumber
+      const shipment = shipments.find(s => s.id === shipmentId);
+
       const shipmentRef = doc(db, 'shipments', shipmentId);
       await updateDoc(shipmentRef, {
         status: newStatus,
         updatedAt: serverTimestamp()
       });
       console.log(`✅ Admin updated shipment ${shipmentId} to ${newStatus}`);
+
+      // Notify user about status change
+      if (shipment && shipment.userEmail) {
+        await notifyUserStatusChange(shipment.trackingNumber, shipment.userEmail, newStatus);
+      }
     } catch (error) {
       console.error('Error updating status:', error);
       alert('Failed to update status. Please try again.');
